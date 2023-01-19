@@ -4,6 +4,8 @@ NiryoArucoCalibration is a Python Program made to calibrate and check if the Nir
 
 The program work by comparing with already check Aruco tag position with current position with the camera.
 
+![alt text](https://github.com/DEUS-X9/NiryoArucoCalibration/blob/main/picture/Ned_1.jpg)
+
 Axis will be draw on the picture in the /picture folder and will look like this :
 
 ![alt text](https://github.com/DEUS-X9/NiryoArucoCalibration/blob/main/picture/testAxis0.png)
