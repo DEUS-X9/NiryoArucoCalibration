@@ -5,10 +5,12 @@ def p(s):
 from Calib_RosWrapper import RosWrapperCalib
 from VisionBrain import VisionBrain
 import numpy as np
+import os
 import simplejson as json
 import time as t
 class NiryoCalib:
-    def __init__(self):
+    def __init__(self): 
+        self.__filepath = os.path.realpath(__file__)
         self.wrap=RosWrapperCalib()
         mtx,dist = self.wrap.cameraCalibrationDefault()
         mtx=np.array(mtx).reshape(3,3)
@@ -20,7 +22,6 @@ class NiryoCalib:
         
         #normalement y'a une fonction de recherche
         self.__selfViewDefaultPosition()
-        t.sleep(5)
         img = self.wrap.Vision.getImage('test')
         ret = self.view.checkAruco([img], fileName='testAxis')
 
@@ -36,22 +37,19 @@ class NiryoCalib:
 
 
     def CheckPosition(self):
-        
+        if not os.path.exists(os.path.dirname(self.__filepath)+'/config.json'):
+            self.setCalibration()
         data = self.JsonToConfig()
         data = [data[a] for a in data if 'Aruco' in a]
         self.__selfViewDefaultPosition()
-        t.sleep(5)
         img = self.wrap.Vision.getImage()
         ret = self.view.checkAruco([img], fileName='checkAxis')
         
+        self.__defaultPosition()
         if len(data)!=len(ret):
             print("pas le meme nombre d aruco entre les deux comparaisons")
             return False
-        
         ret=ret[0]
-        print(data)
-        print()
-        print(ret)
         err=[]
         for d in data:
             print(d['id'])
@@ -64,7 +62,7 @@ class NiryoCalib:
             mean =sum(err)/len(err)
             print(mean)
             self.__defaultPosition()
-            if mean<0.005:#(en gros quand on se trompe d'un centimetre)
+            if mean<0.005:#(en gros quand on se trompe d'un demi centimetre en moyenne)
                 return True
             else : 
                 return False
@@ -77,10 +75,10 @@ class NiryoCalib:
         data={}
         for r in ret:
             data['Aruco'+str(r[2])]={"tvecs":list(r[0]),'rvecs':list(r[1]),'id':str(r[2])}
-        with open("config.json","w") as f:
+        with open(os.path.dirname(self.__filepath)+"/config.json","w") as f:
             json.dump(data,f, indent=4)
     def JsonToConfig(self):
-        with open('config.json') as f:
+        with open(os.path.dirname(self.__filepath)+'/config.json') as f:
             return json.load(f)
 #n=NiryoCalib()
 #n.setCalibration()
