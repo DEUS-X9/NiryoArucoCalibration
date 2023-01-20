@@ -13,4 +13,4 @@ Axis will be draw on the picture in the /picture folder and will look like this 
 If the robot is calibrate, it will go into sleep pose and if it's not calibrated ; it will recalibrated.
 
 You can restart a calibration by calling :
-```python NiryoArucoCalibration calibrate.py ```
+```python NiryoArucoCalibration/calibrate.py ```
